@@ -58,8 +58,8 @@ class ConcreteDecoratorA(Decorator):#####pizza hạt tiêu cài abstract
     Decorators can execute their behavior either before or after the call to a
     wrapped object.
     """
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, *args, **kwargs):################ ko có cũng đc 
+        super().__init__(*args, **kwargs)####################ko có cũng đc 
     def __str__(self) -> str:
         return f"ConcreteDecoratorA({self.shape})"
 

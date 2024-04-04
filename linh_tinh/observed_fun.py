@@ -1,3 +1,4 @@
+# nhóm 3
 #####tuple (value, [])
 def observedfunction1(txt):
     print(txt)

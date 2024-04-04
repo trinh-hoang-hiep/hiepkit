@@ -1,3 +1,4 @@
+# nhóm 2
 def decor_function(origin_function):
     def wrapper_function(*args, **kwargs):
         print("sua doi{}".format(origin_function.__name__))
