@@ -57,3 +57,6 @@ a[2][a[1].value]()
 # index=1
 x.value= 0
 a[2][a[1].value]()
+
+
+#####just pseudo chưa chạy đc
