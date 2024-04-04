@@ -1,5 +1,5 @@
 # from abc import ABC ################https://github.com/MilovanTomasevic/Python-Design-Patterns/tree/master/src/1_patterns/3_StructuralPatterns/4_Decorator
-
+# https://viblo.asia/p/hieu-biet-co-ban-ve-decorator-pattern-pVYRPjbVG4ng
 
 # class Shape(ABC):
 class Shape():

@@ -1,4 +1,4 @@
-# Observed object (also referred to as publisher)
+# Observed object (also referred to as publisher) https://viblo.asia/p/design-pattern-observer-V3m5WO8W5O7
 class Inventory:
     def __init__(self):
         self.observers = []

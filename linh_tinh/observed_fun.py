@@ -5,7 +5,7 @@ def observedfunction1(txt):
 
 def observedfunction2needcall(txt):
     print(txt)
-is_change=False
+is_change=False#####có thể thay "excel 1 excel2= pointer"
 a=("excel1", is_change, [observedfunction1, observedfunction2needcall])
 
 is_change=True

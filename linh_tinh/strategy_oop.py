@@ -1,4 +1,4 @@
-# # Behavior Pattern nhóm 3
+# # Behavior Pattern nhóm 3 https://viblo.asia/p/tim-hieu-strategy-pattern-znmMdy7YGr69
 # #sửa method của các class
 # # VD bài toán Car kế thừa Vehicle, đỡ phải override hàm go cho lớp Helicopter , chỉ thay đổi 1 file
 # # SOLUTION thay đổi Car "is-a" sang "has-a" trích những đoạn code dễ thay đổi và đóng gói chúng vào đối tượng
