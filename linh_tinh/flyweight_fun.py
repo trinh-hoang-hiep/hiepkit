@@ -136,3 +136,5 @@ if __name__ == "__main__":
 
 # https://www.codeconvert.ai/csharp-to-python-converter
 # https://viblo.asia/p/flyweight-design-pattern-tro-thu-dac-luc-cua-developers-maGK7B4b5j2
+
+##### vậy remove đối tượng thì có giải phóng ko????
