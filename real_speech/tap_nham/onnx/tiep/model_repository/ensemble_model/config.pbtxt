@@ -1,0 +1,198 @@
+# Copyright (c) 2023, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#  * Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#  * Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#  * Neither the name of NVIDIA CORPORATION nor the names of its
+#    contributors may be used to endorse or promote products derived
+#    from this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS ``AS IS'' AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+# CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+# EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+# PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+# OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+name: "ensemble_model"
+platform: "ensemble"
+max_batch_size: 16
+input [
+  {
+    name: "x_tst"
+    data_type: TYPE_INT64
+    dims: [-1 ]
+  },
+  {
+    name: "x_tst_lengths"
+    data_type: TYPE_INT64
+    dims: [1]
+  }
+]
+output [
+  {
+    name: "synthesized_audio"
+    data_type: TYPE_FP32
+    dims: [1, -1 ]
+  }
+]
+
+ensemble_scheduling {
+  step [
+    {
+      model_name: "enc_p"
+      model_version: -1
+      input_map {
+        key: "x"
+        value: "x_tst"
+      },
+      input_map {
+        key: "x_lengths"
+        value: "x_tst_lengths"
+      }
+      output_map {
+        key: "xout"
+        value: "xout_enc_p"
+      },
+      output_map {
+        key: "m_p"
+        value: "m_p_enc_p"
+      },
+      output_map {
+        key: "logs_p"
+        value: "logs_p_enc_p"
+      },
+      output_map {
+        key: "x_mask"
+        value: "x_mask_enc_p"
+      }
+    },
+    {
+      model_name: "preprocess_dp"
+      model_version: -1
+      input_map {
+        key: "preprocess_dp_input_1"
+        value: "xout_enc_p"
+      },
+      input_map {
+        key: "preprocess_dp_input_2"
+        value: "x_mask_enc_p"
+      }
+      output_map {
+        key: "preprocess_dp_output_1"
+        value: "x_preprocess_dp"
+      },
+      output_map {
+        key: "preprocess_dp_output_2"
+        value: "x_mask_preprocess_dp"
+      },
+      output_map {
+        key: "preprocess_dp_output_3"
+        value: "zin_preprocess_dp"
+      }
+    },
+    {
+      model_name: "dp"
+      model_version: -1
+      input_map {
+        key: "x"
+        value: "x_preprocess_dp"
+      }
+      input_map {
+        key: "x_mask"
+        value: "x_mask_preprocess_dp"
+      }
+      input_map {
+        key: "zin"
+        value: "zin_preprocess_dp"
+      }
+      output_map {
+        key: "logw"
+        value: "logw_dp"
+      }
+    },
+    {
+      model_name: "preprocess_flow"
+      model_version: -1
+      input_map {
+        key: "preprocess_flow_input_1"
+        value: "x_mask_enc_p"
+      },
+      input_map {
+        key: "preprocess_flow_input_2"
+        value: "logw_dp"
+      },
+      input_map {
+        key: "preprocess_flow_input_3"
+        value: "m_p_enc_p"
+      },
+      input_map {
+        key: "preprocess_flow_input_4"
+        value: "logs_p_enc_p"
+      }
+      output_map {
+        key: "preprocess_flow_output_1"
+        value: "zp_preprocess_flow"
+      },
+      output_map {
+        key: "preprocess_flow_output_2"
+        value: "ymask_preprocess_flow"
+      }
+    },
+    {
+      model_name: "flow"
+      model_version: -1
+      input_map {
+        key: "z_p"
+        value: "zp_preprocess_flow"
+      },
+      input_map {
+        key: "y_mask"
+        value: "ymask_preprocess_flow"
+      }
+      output_map {
+        key: "z"
+        value: "z_flow"
+      }
+    },
+    {
+      model_name: "preprocess_dec"
+      model_version: -1
+      input_map {
+        key: "preprocess_dec_input_1"
+        value: "ymask_preprocess_flow"
+      },
+      input_map {
+        key: "preprocess_dec_input_2"
+        value: "z_flow"
+      }
+      output_map {
+        key: "preprocess_dec_output"
+        value: "z_in_preprocess_dec"
+      }
+    },
+    {
+      model_name: "dec"
+      model_version: -1
+      input_map {
+        key: "z_in"
+        value: "z_in_preprocess_dec"
+      }
+      output_map {
+        key: "o"
+        value: "synthesized_audio"
+      }
+    }
+  ]
+}
+
